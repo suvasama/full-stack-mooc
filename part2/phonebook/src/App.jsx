@@ -1,43 +1,61 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newPerson, setNewPerson] = useState({name:'', number: '', id: 4})
   const [filterNames, setFilterNames] = useState('')
   const hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => setPersons(response.data))
     }
   useEffect(hook, [])
+
   const addPerson = (event) => {
     event.preventDefault()
     if (persons.some(x => x.name === newPerson.name)){
-      alert(`${newPerson.name} is already added to the phonebook`)
+      confirm(`${newPerson.name} is already added to the phonebook, replace the old number with a new one?`)
+      const personsFiltered = persons.filter(person => person.name != newPerson.name)
+      setPersons([
+        ...personsFiltered, 
+        newPerson
+      ])
+      personService.update(newPerson.id, newPerson)
     } else {
+      personService.create(newPerson)
       setPersons(persons.concat(newPerson))
     }
+  }
+  const deletePerson = (id) => {
+    const personToDelete = persons.find(person => person.id == id)
+    confirm(`Delete ${personToDelete.name}?`)
+    setPersons(persons.filter(person => person.id != id))
+    personService.remove(id)
   }
   const handleNewName = (event) => {
     const updatedId = newPerson.id + 1
     setNewPerson({
-      ...newPerson, 
+      ...newPerson,
       id: updatedId, 
       name: event.target.value
     })
   }
   const handleNewNumber = (event) => {
-    setNewPerson({...newPerson, number: event.target.value})
+    setNewPerson({
+      ...newPerson, 
+      number: event.target.value
+    })
   }
   const handleFilterNames = (event) => {
     setFilterNames(event.target.value)
   }
-  const namesToShow = filterNames 
+  const personsToShow = filterNames 
     ? persons.filter(x => x.name.toLowerCase().includes(filterNames.toLowerCase()))
     : persons
 
@@ -53,7 +71,7 @@ const App = () => {
         changeNumber={handleNewNumber}
       />
       <h3>Numbers</h3>
-      <Persons ar={namesToShow}/>
+      <Persons ar={personsToShow} onClick={deletePerson}/>
     </div>
   )
 }

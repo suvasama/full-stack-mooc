@@ -14,7 +14,7 @@ const PersonForm = (props) => {
     return (
       <form onSubmit={props.onSubmit}>
         <Form 
-          id={props.person.id} 
+          id={props.person.id}
           text='name' 
           value={props.person.name} 
           onChange={props.changeName}
