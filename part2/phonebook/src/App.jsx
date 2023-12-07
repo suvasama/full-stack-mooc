@@ -10,12 +10,26 @@ const App = () => {
   const [persons, setPersons] = useState([])
   const [newPerson, setNewPerson] = useState({name:'', number: '', id: 4})
   const [filterNames, setFilterNames] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+
   const hook = () => {
     personService
       .getAll()
       .then(response => setPersons(response.data))
     }
   useEffect(hook, [])
+
+  const Notification = ({ message, className }) => {
+    if (message === null) {
+      return null
+    }
+    return (
+      <div className={className}>
+        {message}
+      </div>
+    )
+  }
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -26,10 +40,23 @@ const App = () => {
         ...personsFiltered, 
         newPerson
       ])
-      personService.update(newPerson.id, newPerson)
+      personService
+        .update(newPerson.id, newPerson)
+        .catch(error => {
+          setErrorMessage(
+            `Information of ${newPerson.name} has been removed from the server`
+          ) 
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)}
+      )
     } else {
       personService.create(newPerson)
       setPersons(persons.concat(newPerson))
+      setSuccessMessage(`Added ${newPerson.name}`)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
     }
   }
   const deletePerson = (id) => {
@@ -62,6 +89,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} className={'success'}/>
+      <Notification message={errorMessage} className={'error'}/>
       <Filter value={filterNames} onChange={handleFilterNames}/>
       <h3>add a new</h3>
       <PersonForm 
