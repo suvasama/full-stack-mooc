@@ -35,13 +35,17 @@ const App = () => {
     event.preventDefault()
     if (persons.some(x => x.name === newPerson.name)){
       confirm(`${newPerson.name} is already added to the phonebook, replace the old number with a new one?`)
-      const personsFiltered = persons.filter(person => person.name != newPerson.name)
-      setPersons([
-        ...personsFiltered, 
-        newPerson
-      ])
+      // below bug fixes after submitting the solutions to part 2 as part of completing part 3
+      // copied from the example solution
+      const person = persons.find(person => person.name == newPerson.name)
       personService
-        .update(newPerson.id, newPerson)
+        .update(person.id, {
+          ...person, 
+          number: newPerson.number
+        })
+        .then((updatedPerson) => {
+          setPersons(persons.map(p => p.id !== person.id ? p : updatedPerson))
+        })
         .catch(error => {
           setErrorMessage(
             `Information of ${newPerson.name} has been removed from the server`
