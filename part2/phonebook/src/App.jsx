@@ -55,12 +55,22 @@ const App = () => {
           }, 5000)}
       )
     } else {
-      personService.create(newPerson)
-      setPersons(persons.concat(newPerson))
-      setSuccessMessage(`Added ${newPerson.name}`)
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      personService
+        .create(newPerson)
+        .then(createdPerson => {
+          setPersons(persons.concat(createdPerson))
+          setSuccessMessage(`Added ${createdPerson.name}`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+        }, 5000)})
+        .catch(error => {
+          setErrorMessage(
+            `${error.response.data.error}`
+          ) 
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
     }
   }
   const deletePerson = (id) => {
