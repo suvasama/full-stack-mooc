@@ -20,18 +20,32 @@ const listWithMultipleBlogs = [
     likes: 5,
     __v: 0
   },{
-    _id: '65a54d1a3eb83c19e9df7866',
-    title: '8 Blog Topic Generators for Blog Post Idea Inspiration',
-    author: 'Megan Marrs',
-    url: 'https://www.wordstream.com/blog/ws/2015/02/12/blog-topic-generators',
-    likes: 38,
+    _id: '35b29461430b9b415246b9f5',
+    title: 'All Sorts of Harmfull Stuff',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Harmful_Stuff.html',
+    likes: 40,
     __v: 0
   },{
     _id: '65a54d1a3eb83c19e9df7866',
     title: 'Blogin kirjoittaminen: Askel askeleelta kohti menestyvää blogia',
     author: 'Mikaela Laukkanen',
-    url: 'https://www.wordstream.com/blog/ws/2015/02/12/blog-topic-https://bukra.fi/blogin-kirjoittaminen/',
+    url: 'https://bukra.fi/blogin-kirjoittaminen/',
     likes: 2,
+    __v: 0
+  },{
+    _id: '65a54cdf3eb83c19e9df7863',
+    title: 'Blogin kirjoittaminen: Raflaavan otsikon keksiminen',
+    author: 'Mikaela Laukkanen',
+    url: 'https://bukra.fi/blogin-kirjoittaminen-otsikon-keksiminen/',
+    likes: 8,
+    __v: 0
+  },{
+    _id: '65a5549883bfb56e3a1596d9',
+    title: 'Blogin kirjoittaminen: Miten saan tykkäyksiä?',
+    author: 'Mikaela Laukkanen',
+    url: 'https://bukra.fi/blogin-kirjoittaminen-tykkaykset/',
+    likes: 0,
     __v: 0
   }
 ]
@@ -56,7 +70,7 @@ describe('total likes', () => {
 
   test('of a bigger list is calculated right', () => {
     const result = listHelper.totalLikes(listWithMultipleBlogs)
-    expect(result).toBe(45)
+    expect(result).toBe(55)
   })
 })
 
@@ -78,11 +92,61 @@ describe('favorite blog', () => {
 
   test('of a bigger list is retrived correctly', () => {
     const favorite = {
-      title: '8 Blog Topic Generators for Blog Post Idea Inspiration',
-      author: 'Megan Marrs',
-      likes: 38
+      title: 'All Sorts of Harmfull Stuff',
+      author: 'Edsger W. Dijkstra',
+      likes: 40,
     }
     const result = listHelper.favoriteBlog(listWithMultipleBlogs)
     expect(result).toEqual(favorite)
+  })
+})
+
+describe('author with the most blogs', () => {
+  test('of empty list is empty', () => {
+    const result = listHelper.mostBlogs(emptyBlogList)
+    expect(result).toEqual({})
+  })
+
+  test('when list has only one blog, equals the information of that', () => {
+    const oneBlog = {
+      author: 'Edsger W. Dijkstra',
+      blogs: 1,
+    }
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result).toEqual(oneBlog)
+  })
+
+  test('of a bigger list is retrived correctly', () => {
+    const highestBlogCount = {
+      author: 'Mikaela Laukkanen',
+      blogs: 3,
+    }
+    const result = listHelper.mostBlogs(listWithMultipleBlogs)
+    expect(result).toEqual(highestBlogCount)
+  })
+})
+
+describe('author with the most likes', () => {
+  test('of empty list is empty', () => {
+    const result = listHelper.mostLikes(emptyBlogList)
+    expect(result).toEqual({})
+  })
+
+  test('when list has only one blog, equals the information of that', () => {
+    const oneBlog = {
+      author: 'Edsger W. Dijkstra',
+      likes: 5,
+    }
+    const result = listHelper.mostLikes(listWithOneBlog)
+    expect(result).toEqual(oneBlog)
+  })
+
+  test('of a bigger list is retrived correctly', () => {
+    const highestLikesSum = {
+      author: 'Edsger W. Dijkstra',
+      likes: 45,
+    }
+    const result = listHelper.mostLikes(listWithMultipleBlogs)
+    expect(result).toEqual(highestLikesSum)
   })
 })
