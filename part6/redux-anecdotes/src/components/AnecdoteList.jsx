@@ -16,9 +16,16 @@ const Anecdote = ({ anecdote, handleClick }) => {
 }
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector(state => state)
+  const anecdotes = useSelector(state => {
+    if ( state.filter === 'ALL'){
+      return state.anecdotes
+    }
+    const byFilterField =
+            a => a.content.toLowerCase().includes(state.filter.toLowerCase())
+    return state.anecdotes.filter(byFilterField)
+  })
   const dispatch = useDispatch()
-
+  
   const byVotes = (a1, a2) => a2.votes - a1.votes
 
   return (
